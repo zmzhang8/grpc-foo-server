@@ -4,7 +4,7 @@
 
 1. [Go 1.17+](https://go.dev/dl)
 1. [Protocol buffer compiler](https://grpc.io/docs/protoc-installation)
-2. Go plugins for the protocol buffer compiler
+1. Go plugins for the protocol buffer compiler
 ```
 go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
@@ -24,6 +24,17 @@ This application leverages Protocol Buffers for service definitions and data ser
 protoc --go_opt=paths=source_relative --go_out=/path/to/grpc-foo-server/pb_gen \
   --go-grpc_opt=paths=source_relative --go-grpc_out=/path/to/grpc-foo-server/pb_gen \
   $(find . -iname "*.proto")
+```
+
+## Build
+
+1. Build server binary
+```
+env GOOS=linux GOARCH=amd64 go build -o build/server main.go
+```
+2. Build Docker image
+```
+docker build -t grpc-foo-server .
 ```
 
 ## Reference
