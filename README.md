@@ -37,6 +37,18 @@ env GOOS=linux GOARCH=amd64 go build -o build/server main.go
 docker build -t grpc-foo-server .
 ```
 
+## Testing
+
+Run all tests in the parent package
+```
+go test foo/...
+```
+
+Run tests in a child package
+```
+go test foo/path/to/package
+```
+
 ## Reference
 
 - [Protocol Buffers Documentation](https://developers.google.com/protocol-buffers/docs/overview)
@@ -47,3 +59,4 @@ docker build -t grpc-foo-server .
 - [gRPC Performance Best Practices](https://www.grpc.io/docs/guides/performance)
 - [gRPC Health Checking Protocol](https://github.com/grpc/grpc/blob/master/doc/health-checking.md)
 - [gRPC Metadata in Go](https://github.com/grpc/grpc-go/blob/master/Documentation/grpc-metadata.md)
+- [Go Testing](https://pkg.go.dev/testing)
