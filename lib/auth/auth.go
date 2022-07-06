@@ -21,7 +21,7 @@ func DefaultAuth(ctx context.Context) (context.Context, error) {
 func NoAuth(ctx context.Context) (context.Context, error) {
 	// https://pkg.go.dev/github.com/grpc-ecosystem/go-grpc-middleware/auth#pkg-types
 	// The `Context` returned must be a child `Context` of the one passed in
-	newCtx := context.WithValue(ctx, metadataKey{}, nil)
+	newCtx := context.WithValue(ctx, metadataKey{}, "")
 	return newCtx, nil
 }
 
@@ -40,6 +40,6 @@ func UserAuth(ctx context.Context) (context.Context, error) {
 
 	// https://pkg.go.dev/github.com/grpc-ecosystem/go-grpc-middleware/auth#pkg-types
 	// The `Context` returned must be a child `Context` of the one passed in
-	newCtx := context.WithValue(ctx, metadataKey{}, nil)
+	newCtx := context.WithValue(ctx, metadataKey{}, "")
 	return newCtx, nil
 }

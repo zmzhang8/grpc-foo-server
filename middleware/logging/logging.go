@@ -2,7 +2,6 @@ package logging
 
 import (
 	"context"
-	"foo/lib/log"
 	"path"
 	"time"
 
@@ -10,6 +9,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"foo/lib/log"
 )
 
 type metadataKey struct{}
@@ -23,7 +24,7 @@ type Field struct {
 	Name        string
 }
 
-func UnaryServerInterceptor(fields ...Field) grpc.UnaryServerInterceptor {
+func UnaryServerInterceptor(logger log.Logger, fields ...Field) grpc.UnaryServerInterceptor {
 	return func(
 		ctx context.Context,
 		req interface{},
@@ -31,7 +32,7 @@ func UnaryServerInterceptor(fields ...Field) grpc.UnaryServerInterceptor {
 		handler grpc.UnaryHandler,
 	) (interface{}, error) {
 		startTime := time.Now().UTC()
-		contextLogger := loggerWithFields(ctx, fields)
+		contextLogger := loggerWithFields(logger, ctx, fields)
 		newCtx := context.WithValue(ctx, metadataKey{}, contextLogger)
 
 		contextLogger.Info("Started unary call")
@@ -46,7 +47,7 @@ func UnaryServerInterceptor(fields ...Field) grpc.UnaryServerInterceptor {
 	}
 }
 
-func StreamServerInterceptor(fields ...Field) grpc.StreamServerInterceptor {
+func StreamServerInterceptor(logger log.Logger, fields ...Field) grpc.StreamServerInterceptor {
 	return func(
 		srv interface{},
 		stream grpc.ServerStream,
@@ -55,7 +56,7 @@ func StreamServerInterceptor(fields ...Field) grpc.StreamServerInterceptor {
 	) error {
 		startTime := time.Now().UTC()
 		ctx := stream.Context()
-		contextLogger := loggerWithFields(ctx, fields)
+		contextLogger := loggerWithFields(logger, ctx, fields)
 		newCtx := context.WithValue(ctx, metadataKey{}, contextLogger)
 		wrapped := grpc_middleware.WrapServerStream(stream)
 		wrapped.WrappedContext = newCtx
@@ -72,7 +73,7 @@ func StreamServerInterceptor(fields ...Field) grpc.StreamServerInterceptor {
 	}
 }
 
-func loggerWithFields(ctx context.Context, fields []Field) log.Logger {
+func loggerWithFields(logger log.Logger, ctx context.Context, fields []Field) log.Logger {
 	args := make([]interface{}, 0)
 	for _, field := range fields {
 		value := ctx.Value(field.MetadataKey)
@@ -80,7 +81,7 @@ func loggerWithFields(ctx context.Context, fields []Field) log.Logger {
 		args = append(args, value)
 	}
 
-	return log.With(args...)
+	return logger.With(args...)
 }
 
 func logwCodeToLevel(

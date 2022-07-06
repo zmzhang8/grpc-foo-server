@@ -43,12 +43,12 @@ func main() {
 	server := grpc.NewServer(
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
 			mid_request_id.StreamServerInterceptor(),
-			mid_logging.StreamServerInterceptor(loggingFields),
+			mid_logging.StreamServerInterceptor(log.DefaultLogger, loggingFields),
 			grpc_auth.StreamServerInterceptor(auth.DefaultAuth),
 		)),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			mid_request_id.UnaryServerInterceptor(),
-			mid_logging.UnaryServerInterceptor(loggingFields),
+			mid_logging.UnaryServerInterceptor(log.DefaultLogger, loggingFields),
 			grpc_auth.UnaryServerInterceptor(auth.DefaultAuth),
 		)),
 	)
